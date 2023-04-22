@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class ManageScene : MonoBehaviour
+public class SceneLoader : MonoBehaviour
 {
     public static string LastScene = "HomeScene";
 

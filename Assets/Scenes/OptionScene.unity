@@ -469,7 +469,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1737162044348144760, guid: 927738d3c6f9c954a850da369d00fd1c, type: 3}
       propertyPath: m_Name
-      value: SceneManager
+      value: SceneLoader
       objectReference: {fileID: 0}
     - target: {fileID: 1737162044348144762, guid: 927738d3c6f9c954a850da369d00fd1c, type: 3}
       propertyPath: m_RootOrder
