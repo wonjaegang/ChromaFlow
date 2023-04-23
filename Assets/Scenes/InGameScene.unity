@@ -389,6 +389,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 596be7e5a74f08b43918a408d9a19178, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  ColorCombination:
+  - 
+  - 
+  - 
   newBoard: {fileID: 2097844245}
 --- !u!4 &819202020
 Transform:
@@ -1072,6 +1076,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2ee9cfe930dfb0246aa9fa9be593bf60, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  ColorCombination: []
   Marker: {fileID: 5224688775485912875, guid: 0c6123b1ecd3f224c9f2320e5d0ad2d3, type: 3}
   VerticalLine: {fileID: 7471005693367559534, guid: 9458e785d86bf084f972ba18e72fd0bf, type: 3}
   BoardSideMargin: 1.2
