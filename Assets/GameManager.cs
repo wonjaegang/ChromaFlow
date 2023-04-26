@@ -16,9 +16,10 @@ public class GameManager : MonoBehaviour
     {
         BoardData = new()
         {
-            new List<string>() {  "1",   "2",   "3",   "4" },
-            new List<string>() {   "", "nr0", "nl0",    "" },
-            new List<string>() {  "3",   "2",   "1",   "4" }
+            new List<string>() {   "0",   "2",   "3",   "4" },
+            new List<string>() { "nr0", "nl0", "nr0", "nl0" },
+            new List<string>() {    "",    "", "ac3",    "" },
+            new List<string>() {   "3",   "2",   "0",   "4" }
         };
 
         ColorCombination = new string[8]{ "#197278",  // ¸¶Ä¿ 1

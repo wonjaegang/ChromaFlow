@@ -179,7 +179,7 @@ GameObject:
   - component: {fileID: 7981556870434789402}
   - component: {fileID: 1194412156341844229}
   m_Layer: 0
-  m_Name: VerticalLine
+  m_Name: Line
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -218,6 +218,13 @@ MonoBehaviour:
   UpperEnd: {fileID: 1523340931141835294}
   MiddleLine: {fileID: 9047652010607284375}
   DownEnd: {fileID: 1521100163144991480}
+  PosX: 0
+  PosY: 0
+  RotationZ: 0
+  width: 0
+  length: 0
+  color: {r: 0, g: 0, b: 0, a: 0}
+  style: 
 --- !u!1 &9047652010607284375
 GameObject:
   m_ObjectHideFlags: 0

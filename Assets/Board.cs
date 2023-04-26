@@ -11,13 +11,15 @@ public class Board : MonoBehaviour
     public string[] ColorCombination;
 
     public GameObject Marker;
-    public GameObject VerticalLine;
+    public GameObject Line;
 
     // 월드포인트 기준
     public float BoardSideMargin;
     public float MarkerOffset;
     public float VerticalLineY;
-    private readonly float VerticalLineLength = 5.0f;
+    public float VerticalLineLength;
+    public float VerticalLineWidth;
+    public float MarkerSize;
 
     private float CameraWidth;
     private float CameraHeight;
@@ -38,7 +40,7 @@ public class Board : MonoBehaviour
     public void DrawBoard()
     {
         GetCameraSize();
-        Color BackGroundColor = GetColorFromHTML(ColorCombination[7]);
+        Color BackGroundColor = GetColorFromHTML(ColorCombination[^1]);
         Camera.main.backgroundColor = BackGroundColor;
 
         int VerticalLineNum = Data[0].Count;
@@ -48,10 +50,15 @@ public class Board : MonoBehaviour
                           (CameraWidth - BoardSideMargin) * 2 / (VerticalLineNum - 1) * column;
 
             // VerticalLine 생성
-            GameObject NewVerticalLine = Instantiate(VerticalLine, this.transform);
-            NewVerticalLine.transform.position = new Vector3(Pos_x, VerticalLineY, 0);
-            Color VerticalLineColor = GetColorFromHTML(ColorCombination[6]);
-            NewVerticalLine.GetComponent<VerticalLineColor>().SetVerticalLineColor(VerticalLineColor);
+            GameObject NewVerticalLine = Instantiate(Line, this.transform);
+            Line VerticalLine = NewVerticalLine.GetComponent<Line>();
+            VerticalLine.Pos = new float[3] {Pos_x, VerticalLineY, 0};
+            VerticalLine.width = VerticalLineWidth;
+            VerticalLine.length = VerticalLineLength;
+            VerticalLine.color = GetColorFromHTML(ColorCombination[^2]);
+            VerticalLine.style = "";
+            VerticalLine.SetLine();
+
 
             // 입/출력 Marker 생성
             float MarkerY = VerticalLineY + VerticalLineLength / 2 + MarkerOffset;
@@ -60,23 +67,29 @@ public class Board : MonoBehaviour
                 // 데이터에서 마커의 행 위치/값(색) 확인
                 int MarkerRow = (Data.Count - 1) * (1 - gain) / 2;
                 int DataValue = int.Parse(Data[MarkerRow][column]);
+                if (DataValue == 0) continue;
                 Color MarkerColor = GetColorFromHTML(ColorCombination[DataValue]);
 
                 // 마커 생성, 위치 및 색 부여
                 GameObject NewMarker = Instantiate(Marker, this.transform);
                 NewMarker.transform.position = new Vector3(Pos_x, gain * MarkerY, 0);
+                NewMarker.transform.localScale = new Vector3(MarkerSize, MarkerSize, 0);
                 NewMarker.GetComponent<SpriteRenderer>().color = MarkerColor;
-            }            
-
+            }
 
             // 기타 Object 생성
-            int HorizontalObjNum = Data.Count;
+            int HorizontalObjNum = Data.Count - 2;
             for (int row = 0; row < HorizontalObjNum; row++)
             {
-                float Pos_y = 0;
-            }
-            
+                float Pos_y = -VerticalLineLength / 2 + VerticalLineLength / (HorizontalObjNum + 1) * (row + 1);
 
+                string DataValue = Data[row + 1][column];
+                if (DataValue == "") continue;
+                
+                //GameObject a = Instantiate(Marker, this.transform);
+                //a.transform.position = new Vector3(Pos_x, Pos_y, 0);
+                
+            }   
         }
     }
 }
