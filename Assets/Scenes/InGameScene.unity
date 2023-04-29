@@ -1082,3 +1082,7 @@ MonoBehaviour:
   BoardSideMargin: 0.9
   MarkerOffset: 0.7
   VerticalLineY: 0
+  VerticalLineLength: 5
+  VerticalLineWidth: 0.3
+  MarkerSize: 0.4
+  HorizentalLineWidth: 0.2

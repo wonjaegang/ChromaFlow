@@ -20,6 +20,7 @@ public class Board : MonoBehaviour
     public float VerticalLineLength;
     public float VerticalLineWidth;
     public float MarkerSize;
+    public float HorizentalLineWidth;
 
     private float CameraWidth;
     private float CameraHeight;
@@ -32,10 +33,19 @@ public class Board : MonoBehaviour
     }
     private Color GetColorFromHTML(string HTMLCode)
     {
-        Color color;
-        ColorUtility.TryParseHtmlString(HTMLCode, out color);
+        ColorUtility.TryParseHtmlString(HTMLCode, out Color color);
         return color;
     }
+
+    private void GenerateMarker(float X, float Y, float scale, Color color, int LayerOrder)
+    {
+        GameObject NewMarker = Instantiate(Marker, this.transform);
+        NewMarker.transform.position = new Vector3(X, Y, 0);
+        NewMarker.transform.localScale = new Vector3(scale, scale, 0);
+        NewMarker.GetComponent<SpriteRenderer>().color = color;
+        NewMarker.GetComponent<SpriteRenderer>().sortingOrder = LayerOrder;
+    }
+
 
     public void DrawBoard()
     {
@@ -44,20 +54,20 @@ public class Board : MonoBehaviour
         Camera.main.backgroundColor = BackGroundColor;
 
         int VerticalLineNum = Data[0].Count;
+        float VerticalLineInterval = (CameraWidth - BoardSideMargin) * 2 / (VerticalLineNum - 1);
         for (int column = 0; column < VerticalLineNum; column++)
         {
-            float Pos_x = -CameraWidth + BoardSideMargin +
-                          (CameraWidth - BoardSideMargin) * 2 / (VerticalLineNum - 1) * column;
+            float Pos_x = -CameraWidth + BoardSideMargin + VerticalLineInterval * column;
 
-            // VerticalLine 积己
-            GameObject NewVerticalLine = Instantiate(Line, this.transform);
-            Line VerticalLine = NewVerticalLine.GetComponent<Line>();
-            VerticalLine.Pos = new float[3] {Pos_x, VerticalLineY, 0};
-            VerticalLine.width = VerticalLineWidth;
-            VerticalLine.length = VerticalLineLength;
-            VerticalLine.color = GetColorFromHTML(ColorCombination[^2]);
-            VerticalLine.style = "";
-            VerticalLine.SetLine();
+            // 荐流急 积己
+            GameObject NewLineObject = Instantiate(Line, this.transform);
+            Line NewLine = NewLineObject.GetComponent<Line>();
+            NewLine.Pos = new float[3] { Pos_x, VerticalLineY, 0 };
+            NewLine.width = VerticalLineWidth;
+            NewLine.length = VerticalLineLength;
+            NewLine.LineColor = GetColorFromHTML(ColorCombination[^2]);
+            NewLine.LayerOrder = 0;
+            NewLine.SetLine();
 
 
             // 涝/免仿 Marker 积己
@@ -68,27 +78,87 @@ public class Board : MonoBehaviour
                 int MarkerRow = (Data.Count - 1) * (1 - gain) / 2;
                 int DataValue = int.Parse(Data[MarkerRow][column]);
                 if (DataValue == 0) continue;
-                Color MarkerColor = GetColorFromHTML(ColorCombination[DataValue]);
+                Color MarkerColor = GetColorFromHTML(ColorCombination[DataValue - 1]);
 
-                // 付目 积己, 困摹 棺 祸 何咯
-                GameObject NewMarker = Instantiate(Marker, this.transform);
-                NewMarker.transform.position = new Vector3(Pos_x, gain * MarkerY, 0);
-                NewMarker.transform.localScale = new Vector3(MarkerSize, MarkerSize, 0);
-                NewMarker.GetComponent<SpriteRenderer>().color = MarkerColor;
+                // 付目 积己
+                GenerateMarker(Pos_x, gain * MarkerY, MarkerSize, MarkerColor, 2);
             }
 
             // 扁鸥 Object 积己
-            int HorizontalObjNum = Data.Count - 2;
-            for (int row = 0; row < HorizontalObjNum; row++)
+            int ExtraObjNum = Data.Count - 2;
+            float ExtraObjNumInterval = VerticalLineLength / (ExtraObjNum + 1);
+            for (int row = 0; row < ExtraObjNum; row++)
             {
-                float Pos_y = -VerticalLineLength / 2 + VerticalLineLength / (HorizontalObjNum + 1) * (row + 1);
+                float Pos_y = VerticalLineLength / 2 - ExtraObjNumInterval * (row + 1);
 
                 string DataValue = Data[row + 1][column];
                 if (DataValue == "") continue;
-                
-                //GameObject a = Instantiate(Marker, this.transform);
-                //a.transform.position = new Vector3(Pos_x, Pos_y, 0);
-                
+
+                int ColorIndex = (int)char.GetNumericValue(DataValue[^1]);
+                switch (DataValue.Substring(0, 2))
+                {
+                    case "ac":
+                        Color acColor = GetColorFromHTML(ColorCombination[ColorIndex - 1]);
+                        GenerateMarker(Pos_x, Pos_y, HorizentalLineWidth, acColor, 1);
+                        break;
+
+                    case "nr":
+                        GameObject nrLineObject = Instantiate(Line, this.transform);
+                        Line nrLine = nrLineObject.GetComponent<Line>();
+                        nrLine.Pos = new float[3] { Pos_x + VerticalLineInterval / 2, Pos_y, -90 };
+                        nrLine.width = HorizentalLineWidth;
+                        nrLine.length = VerticalLineInterval;
+                        nrLine.LineColor = GetColorFromHTML(ColorCombination[^2]);
+                        nrLine.LayerOrder = 1;
+                        nrLine.SetLine();
+
+                        if (ColorIndex > 1)
+                        {
+                            Color nrMarkerColor = GetColorFromHTML(ColorCombination[ColorIndex - 1]);
+                            float nrMarkerX = Pos_x + VerticalLineInterval / 2;
+                            GenerateMarker(nrMarkerX, Pos_y, HorizentalLineWidth, nrMarkerColor, 1);
+                        }
+                        break;
+
+                    case "cr":
+                        GameObject crLineObject = Instantiate(Line, this.transform);
+                        Line crLine = crLineObject.GetComponent<Line>();
+                        crLine.Pos = new float[3] { Pos_x + VerticalLineInterval / 2, Pos_y, -90 };
+                        crLine.width = HorizentalLineWidth;
+                        crLine.length = VerticalLineInterval;
+                        crLine.LineColor = GetColorFromHTML(ColorCombination[ColorIndex - 1]);
+                        crLine.LayerOrder = 1;
+                        crLine.SetLine();
+                        break;
+
+                    case "al":
+                        GameObject alLineObject = Instantiate(Line, this.transform);
+                        Line alLine = alLineObject.GetComponent<Line>();
+                        alLine.Pos = new float[3] { Pos_x - VerticalLineInterval / 2, Pos_y, 90 };
+                        alLine.width = HorizentalLineWidth;
+                        alLine.length = VerticalLineInterval;
+                        alLine.LineColor = GetColorFromHTML(ColorCombination[^2]);
+                        alLine.LayerOrder = 1;
+                        alLine.SetLine();
+                        alLine.SetStyle("Arrow", GetColorFromHTML(ColorCombination[^1]));
+                        break;
+
+                    case "ar":
+                        GameObject arLineObject = Instantiate(Line, this.transform);
+                        Line arLine = arLineObject.GetComponent<Line>();
+                        arLine.Pos = new float[3] { Pos_x + VerticalLineInterval / 2, Pos_y, -90 };
+                        arLine.width = HorizentalLineWidth;
+                        arLine.length = VerticalLineInterval;
+                        arLine.LineColor = GetColorFromHTML(ColorCombination[^2]);
+                        arLine.LayerOrder = 1;
+                        arLine.SetLine();
+                        arLine.SetStyle("Arrow", GetColorFromHTML(ColorCombination[^1]));
+                        break;
+
+                    default:
+                        break;
+                }
+
             }   
         }
     }

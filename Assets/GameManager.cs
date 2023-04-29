@@ -16,11 +16,21 @@ public class GameManager : MonoBehaviour
     {
         BoardData = new()
         {
-            new List<string>() {   "0",   "2",   "3",   "4" },
-            new List<string>() { "nr0", "nl0", "nr0", "nl0" },
-            new List<string>() {    "",    "", "ac3",    "" },
-            new List<string>() {   "3",   "2",   "0",   "4" }
+            new List<string>() {   "0",   "1",   "2",   "3" },
+            new List<string>() { "nr5", "nl5", "nr0", "nl0" },
+            new List<string>() { "ar0",    "", "ac3",  "ac3"},            
+            new List<string>() {    "", "al0", "cr4", "cl4" },
+            new List<string>() {   "3",   "2",   "0",   "1" }
         };
+
+        //BoardData = new()
+        //{
+        //    new List<string>() { "0", "1", "2"},
+        //    new List<string>() { "nr5", "nl5", ""},
+        //    new List<string>() { "ar0", "", "ac3",},
+        //    new List<string>() { "", "al0", "",},
+        //    new List<string>() { "3", "2", "0"}
+        //};
 
         ColorCombination = new string[8]{ "#197278",  // 마커 1
                                           "#83a8a6",  // 마커 2
