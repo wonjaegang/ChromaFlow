@@ -7,13 +7,15 @@ public class Board : MonoBehaviour
     보드 입출력 관리 클래스
  */
 {
+    // 문제 관련 데이터
     public List<List<string>> Data;
     public string[] ColorCombination;
 
+    // 오브젝트
     public GameObject Marker;
     public GameObject Line;
 
-    // 월드포인트 기준
+    // 스크린 변수 - 월드포인트 기준
     public float BoardSideMargin;
     public float MarkerOffset;
     public float VerticalLineY;
@@ -81,7 +83,7 @@ public class Board : MonoBehaviour
                 Color MarkerColor = GetColorFromHTML(ColorCombination[DataValue - 1]);
 
                 // 마커 생성
-                GenerateMarker(Pos_x, gain * MarkerY, MarkerSize, MarkerColor, 2);
+                GenerateMarker(Pos_x, gain * MarkerY, MarkerSize, MarkerColor, 3);
             }
 
             // 기타 Object 생성
@@ -116,7 +118,7 @@ public class Board : MonoBehaviour
                         {
                             Color nrMarkerColor = GetColorFromHTML(ColorCombination[ColorIndex - 1]);
                             float nrMarkerX = Pos_x + VerticalLineInterval / 2;
-                            GenerateMarker(nrMarkerX, Pos_y, HorizentalLineWidth, nrMarkerColor, 1);
+                            GenerateMarker(nrMarkerX, Pos_y, HorizentalLineWidth, nrMarkerColor, 2);
                         }
                         break;
 
@@ -158,7 +160,6 @@ public class Board : MonoBehaviour
                     default:
                         break;
                 }
-
             }   
         }
     }

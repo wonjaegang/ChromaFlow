@@ -66,7 +66,7 @@ public class Line : MonoBehaviour
             Arrow.GetComponent<Transform>().rotation = Quaternion.Euler(0, 0, Pos[2]);
             Arrow.GetComponent<SpriteRenderer>().color = color;
             Arrow.GetComponent<Transform>().localScale = new Vector3((float)(width * 0.7), width, 0);
-            Arrow.GetComponent<SpriteRenderer>().sortingOrder = LayerOrder;
+            Arrow.GetComponent<SpriteRenderer>().sortingOrder = LayerOrder + 1;
         }
     }
 }
