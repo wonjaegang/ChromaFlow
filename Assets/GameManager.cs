@@ -43,7 +43,7 @@ public class GameManager : MonoBehaviour
                                           "#283d3b",  // 수직선
                                           "#edddd4"}; // 배경
 
-        AvailableLine = new Dictionary<string, int>() { { "Normal", -1 }, { "Arrow", 1 }, { "Color", -1 }, };  // -1이면 무한
+        AvailableLine = new Dictionary<string, int>() { { "Normal", -1 }, { "Arrow", 1 }, { "Color1", 8 }, };  // -1이면 무한
 
 
         newBoard.Data = BoardData;

@@ -13,6 +13,10 @@ public class LineSelector : MonoBehaviour
     public Sprite square;
     public Sprite triangle;
 
+    // 선택된 데이터
+    private int SelectedIndex;
+    public string SeletedLineStyle;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -31,8 +35,9 @@ public class LineSelector : MonoBehaviour
         return color;
     }
 
-    private void GenerateLine(string style, Color SelectedColor)
-    {      
+    private void GenerateLine(string style)
+    {     
+        // Line 오브젝트 생성
         GameObject newLine = new("newLine");
         RectTransform newLineRectTrans = newLine.AddComponent<RectTransform>();
         newLineRectTrans.transform.SetParent(this.transform);
@@ -42,8 +47,10 @@ public class LineSelector : MonoBehaviour
         newLineRectTrans.localScale = Vector3.one;
         newLineRectTrans.sizeDelta = new Vector2(0, ScrollView.GetComponent<RectTransform>().rect.height / 3); // custom size
 
+        // 해당 라인 정보 판별
         Color LineColor;
         bool isArrow;
+
         switch (style)
         {
             case "Normal":
@@ -56,8 +63,33 @@ public class LineSelector : MonoBehaviour
                 isArrow = true;
                     break;
 
-            case "Color":
-                LineColor = SelectedColor;
+            case "Color1":
+                LineColor = GetColorFromHTML(ColorCombination[0]);
+                isArrow = false;
+                break;
+
+            case "Color2":
+                LineColor = GetColorFromHTML(ColorCombination[1]);
+                isArrow = false;
+                break;
+
+            case "Color3":
+                LineColor = GetColorFromHTML(ColorCombination[2]);
+                isArrow = false;
+                break;
+
+            case "Color4":
+                LineColor = GetColorFromHTML(ColorCombination[3]);
+                isArrow = false;
+                break;
+
+            case "Color5":
+                LineColor = GetColorFromHTML(ColorCombination[4]);
+                isArrow = false;
+                break;
+
+            case "Color6":
+                LineColor = GetColorFromHTML(ColorCombination[5]);
                 isArrow = false;
                 break;
 
@@ -70,6 +102,7 @@ public class LineSelector : MonoBehaviour
                 break;
         }        
 
+        // 스프라이트들을 통해 라인 생성
         GameObject LeftEnd = new("LeftEnd");
         RectTransform LeftEndRectTrans = LeftEnd.AddComponent<RectTransform>();
         LeftEndRectTrans.transform.SetParent(newLine.transform); // setting parent
@@ -130,6 +163,7 @@ public class LineSelector : MonoBehaviour
             RighrEndImage.preserveAspect = true;
         }
 
+        // 총사용 가능 수 표시
         GameObject Count = new("Count");
         RectTransform CountRectTrans = Count.AddComponent<RectTransform>();
         CountRectTrans.transform.SetParent(newLine.transform); // setting parent
@@ -139,9 +173,15 @@ public class LineSelector : MonoBehaviour
         CountRectTrans.localScale = Vector3.one;
         CountRectTrans.sizeDelta = new Vector2(0, 0); // custom size
         TextMeshProUGUI CountText = Count.AddComponent<TextMeshProUGUI>();
-        int i = 6;
-        int j = 6;
-        CountText.text = i.ToString() + " / " + j.ToString();
+        int TotalAvailableCount = AvailableLine[style];
+        if (TotalAvailableCount != -1)
+        {
+            CountText.text = TotalAvailableCount.ToString() + " / " + TotalAvailableCount.ToString();
+        }
+        else
+        {
+            CountText.text = "∞";
+        }
         CountText.color = GetColorFromHTML(ColorCombination[^2]);
         CountText.enableAutoSizing = true;
         CountText.fontSizeMin = 0f;
@@ -150,11 +190,11 @@ public class LineSelector : MonoBehaviour
 
     public void SetScrollContent()
     {
-        GenerateLine("Empty", new Color(0, 0, 0));
+        GenerateLine("Empty");
 
         foreach (string style in AvailableLine.Keys)
         {
-            GenerateLine(style, new Color(0, 0, 0));
+            GenerateLine(style);
         }
             
     }
