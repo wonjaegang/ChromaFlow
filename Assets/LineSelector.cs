@@ -7,6 +7,9 @@ using TMPro;
 public class LineSelector : MonoBehaviour
 {
     public GameObject ScrollView;
+    public Scrollbar scrollbar;
+    public TranslucentMask mask;
+
     public Dictionary<string, int> AvailableLine;
     public string[] ColorCombination;
     public Sprite circle;
@@ -14,8 +17,15 @@ public class LineSelector : MonoBehaviour
     public Sprite triangle;
 
     // 선택된 데이터
-    private int SelectedIndex;
+    private int SelectedIndex = 0;
     public string SeletedLineStyle;
+
+    // 터치 관련
+    private bool isSwipeMode = false;
+    private float startTouchY;
+    private float endTouchY;
+    private float swipeTime = 0.2f;
+
 
     // Start is called before the first frame update
     void Start()
@@ -26,7 +36,7 @@ public class LineSelector : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-
+        UpdateInput();
     }
 
     private Color GetColorFromHTML(string HTMLCode)
@@ -61,7 +71,7 @@ public class LineSelector : MonoBehaviour
             case "Arrow":
                 LineColor = GetColorFromHTML(ColorCombination[^2]);
                 isArrow = true;
-                    break;
+                break;
 
             case "Color1":
                 LineColor = GetColorFromHTML(ColorCombination[0]);
@@ -191,11 +201,112 @@ public class LineSelector : MonoBehaviour
     public void SetScrollContent()
     {
         GenerateLine("Empty");
-
         foreach (string style in AvailableLine.Keys)
         {
             GenerateLine(style);
         }
-            
+        GenerateLine("Empty");
+
+        scrollbar.value = 1f;
+    }
+
+    private void UpdateInput()
+    {
+        // 현재 Swipe를 진행중이면 터치 불가
+        if (isSwipeMode == true) return;
+
+        #if UNITY_EDITOR
+        // 마우스 왼쪽 버튼을 눌렀을 때 1회
+        if (Input.GetMouseButtonDown(0))
+        {
+            // 터치 시작 지점 (Swipe 방향 구분)
+            startTouchY = Input.mousePosition.y;
+        }
+        else if (Input.GetMouseButtonUp(0))
+        {
+            // 터치 종료 지점 (Swipe 방향 구분)
+            endTouchY = Input.mousePosition.y;
+
+            UpdateSwipe();
+        }
+        #endif
+
+        #if UNITY_ANDROID
+        if (Input.touchCount == 1)
+        {
+            Touch touch = Input.GetTouch(0);
+
+            if (touch.phase == TouchPhase.Began)
+            {
+                // 터치 시작 지점 (Swipe 방향 구분)
+                startTouchY = touch.position.y;
+            }
+            else if (touch.phase == TouchPhase.Ended)
+            {
+                // 터치 종료 지점 (Swipe 방향 구분)
+                endTouchY = touch.position.y;
+
+                UpdateSwipe();
+            }
+        }
+        #endif
+    }
+
+    private void UpdateSwipe()
+    {
+        // Swipe 방향
+        bool isUpper = startTouchY < endTouchY ? false : true;
+
+        // 이동 방향이 위쪽일 때
+        if (isUpper)
+        {
+            // 현재 페이지가 위쪽 끝이면 종료
+            if (SelectedIndex == 0) return;
+
+            // 위쪽으로 이동을 위해 현재 인덱스 1 감소
+            SelectedIndex--;
+        }
+        // 이동 방향이 아래쪽일 때
+        else
+        {
+            // 현재 페이지가 아래쪽 끝이면 종료
+            if (SelectedIndex == AvailableLine.Count - 1) return;
+
+            // 아래쪽 이동을 위해 현재 페이지를 1 증가
+            SelectedIndex++;
+        }
+
+        // currentIndex번째 페이지로 Swipe해서 이동
+        StartCoroutine(OnSwipeOneStep(SelectedIndex));
+    }
+
+    //페이지를 한 장 옆으로 넘기는 Swipe 효과 재생
+    private IEnumerator OnSwipeOneStep(int index)
+    {
+        float start = scrollbar.value;
+        float end = 1 - 1f / (AvailableLine.Count + 2f - 3f) * index;
+        float current = 0;
+        float percent = 0;
+        isSwipeMode = true;
+
+        Color backColor = GetColorFromHTML(ColorCombination[^1]);
+        backColor.a = 0f;
+
+        Color backColor1 = backColor;
+        backColor1.a = 0.5f;
+        mask.SetMaskColor(backColor1, backColor1, backColor1);
+        while (percent < 1)
+        {
+            current += Time.deltaTime;
+            percent = current / swipeTime;
+
+            scrollbar.value = Mathf.Lerp(start, end, percent);
+
+            yield return null;
+        }
+        mask.SetMaskColor(backColor1, backColor, backColor1);
+
+
+        isSwipeMode = false;
     }
 }
